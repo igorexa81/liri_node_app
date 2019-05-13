@@ -5,12 +5,12 @@ var Spotify = require("node-spotify-api")
 var dateFormat = require("dateFormat")
 var fs = require("fs")
 var spotifyThisSong = function (song) {
-
+var spotify = new Spotify(keys.spotify);
     if (!song) {
         song = "The Game Disturbed"
     }
     console.log(keys.spotify)
-    var spotify = new Spotify(keys.spotify);
+    
 
     spotify.search({ type: "track",query: song, limit: 1}, function (err, data) {
         if (err) {
