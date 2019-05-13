@@ -4,9 +4,29 @@ var request = require("request")
 var Spotify = require("node-spotify-api")
 var dateFormat = require("dateFormat")
 var fs = require("fs")
+var spotifyThisSong = function (song) {
 
-// Takes an artist and searches the Bands in Town
-// Artist API for an artist and render information
+    if (!song) {
+        song = "The Game Disturbed"
+    }
+    console.log(keys.spotify)
+    var spotify = new Spotify(keys.spotify);
+
+    spotify.search({ type: "track",query: song, limit: 1}, function (err, data) {
+        if (err) {
+            return console.log(err)
+        }
+
+
+        var songInfo = data.tracks.items[0]
+        outputData(songInfo.artists[0].name)
+        outputData(songInfo.name)
+        outputData(songInfo.album.name)
+        songInfo.preview_url && outputData(songInfo.preview_url)
+    })
+}
+
+
 var concertThis = function (artist) {
     var region = ""
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist.replace(" ", "+") + "/events?app_id=codingbootcamp"
@@ -37,30 +57,6 @@ var concertThis = function (artist) {
     })
 }
 
-// This will take a song, search spotify and return information
-var spotifyThisSong = function (song) {
-    // Default should be "The Game" by Disturbed
-    if (!song) {
-        song = "The Game Disturbed"
-    }
-    console.log(keys.spotify)
-    var spotify = new Spotify(keys.spotify);
-
-    spotify.search({type: "track", query: song,limit: 1}, function (err, data) {
-        if (err) {
-            return console.log(err)
-        }
-
-        // Need to return Artist(s), Song Name, Album, Preview link of song from Spotify
-        var songInfo = data.tracks.items[0]
-        outputData(songInfo.artists[0].name)
-        outputData(songInfo.name)
-        outputData(songInfo.album.name)
-        songInfo.preview_url && outputData(songInfo.preview_url)
-    })
-}
-
-// This will take a movie, search IMDb and return information
 var movieThis = function (movie) {
     // Default should be "The Hangover"
     if (!movie) {
@@ -68,14 +64,14 @@ var movieThis = function (movie) {
     }
 
     var queryUrl = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
-    //console.log(queryUrl);
+   
 
     // Then create a request to the queryUrl
     request(queryUrl, function (err, response, body) {
         // If the request is successful
         if (!err && response.statusCode === 200) {
             // Need to return: Title, Year, IMDB Rating, Rotten Tomatoes Rating, Country,
-            // Language, Plot, Actors
+            
             var movieInfo = JSON.parse(body)
 
             outputData("Title: " + movieInfo.Title)
@@ -90,8 +86,6 @@ var movieThis = function (movie) {
     })
 }
 
-// Using the `fs` Node package, LIRI will take the text inside of random.txt
-// and then use it to call one of LIRI's commands.
 var doWhatItSays = function () {
 
     // read from file
